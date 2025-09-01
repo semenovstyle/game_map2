@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR Quest Test</title>
+    <title>AR Quest Test | Проверка</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -11,7 +11,7 @@
         margin: 0;
         overflow: hidden;
       }
-      #ar-info {
+      #status-text {
         position: fixed;
         bottom: 20px;
         left: 50%;
@@ -26,23 +26,35 @@
         z-index: 100;
       }
     </style>
-    <!-- A-Frame и AR.js библиотеки -->
+    <!-- A-Frame и AR.js библиотеки (используем стабильные версии) -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   </head>
   <body style="margin: 0px; overflow: hidden">
+    <!-- Информационное сообщение для пользователя -->
+    <div id="status-text">
+      Инициализация AR... Если ничего не происходит, проверьте, что страница
+      открыта по HTTPS.
+    </div>
+
     <!-- A-Frame сцена с AR.js -->
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-      <!-- AR маркер 'hiro' -->
+    <!-- sourceUrl: '.' указывает, что нужно искать данные камеры в той же папке -->
+    <a-scene
+      embedded
+      vr-mode-ui="enabled: false;"
+      arjs="sourceType: webcam; debugUIEnabled: false; sourceUrl: ."
+    >
+      <!-- 
+            Сначала тестируем со стандартным маркером Hiro. 
+            Он самый надежный для проверки работоспособности.
+        -->
       <a-marker preset="hiro">
-        <!-- Волшебный куб, который появится на маркере -->
         <a-box
           id="magicCube"
           position="0 0.5 0"
           rotation="0 45 0"
           color="red"
           scale="0.8 0.8 0.8"
-          shadow
         >
           <a-animation
             attribute="rotation"
@@ -54,35 +66,39 @@
         </a-box>
       </a-marker>
 
+      <!-- 
+            Когда Hiro заработает, закомментируйте его и раскомментируйте этот блок
+            для использования вашего собственного маркера.
+            <a-marker type="pattern" url="pattern-marker.patt">
+                <a-box position="0 0.5 0" color="blue"></a-box>
+            </a-marker>
+        -->
+
       <!-- Камера, которая будет отображать AR мир -->
       <a-entity camera></a-entity>
     </a-scene>
 
-    <!-- Информационное сообщение для пользователя -->
-    <div id="ar-info">
-      Наведите камеру на распечатанный 'Hiro' маркер.
-      <br />
-      Коснитесь куба, чтобы изменить его цвет!
-    </div>
-
     <script>
-      // JavaScript для интерактивности
+      // JavaScript для обновления статуса
       document.addEventListener("DOMContentLoaded", function () {
-        var magicCube = document.getElementById("magicCube");
-        var colors = ["red", "blue", "green", "purple", "orange"];
-        var currentColorIndex = 0;
+        var scene = document.querySelector("a-scene");
+        var statusText = document.getElementById("status-text");
 
-        // Обработчик события клика/касания на кубе
-        magicCube.addEventListener("click", function () {
-          currentColorIndex = (currentColorIndex + 1) % colors.length;
-          magicCube.setAttribute("color", colors[currentColorIndex]);
-          console.log("Куб изменил цвет на: " + colors[currentColorIndex]);
+        scene.addEventListener("loaded", function () {
+          statusText.textContent =
+            "Сцена загружена! Наведите камеру на Hiro маркер.";
         });
 
-        // Дополнительная логика для скрытия/показа сообщения, если нужно
-        var arInfo = document.getElementById("ar-info");
-        // Например, можно скрыть сообщение, когда маркер виден
-        // Однако для простоты этого примера оставим его всегда видимым
+        var magicCube = document.getElementById("magicCube");
+        if (magicCube) {
+          var colors = ["red", "blue", "green", "purple", "orange"];
+          var currentColorIndex = 0;
+
+          magicCube.addEventListener("click", function () {
+            currentColorIndex = (currentColorIndex + 1) % colors.length;
+            magicCube.setAttribute("color", colors[currentColorIndex]);
+          });
+        }
       });
     </script>
   </body>
