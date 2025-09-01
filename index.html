@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AR Quest Test</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      #ar-info {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-family: sans-serif;
+        font-size: 14px;
+        text-align: center;
+        z-index: 100;
+      }
+    </style>
+    <!-- A-Frame и AR.js библиотеки -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  </head>
+  <body style="margin: 0px; overflow: hidden">
+    <!-- A-Frame сцена с AR.js -->
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+      <!-- AR маркер 'hiro' -->
+      <a-marker preset="hiro">
+        <!-- Волшебный куб, который появится на маркере -->
+        <a-box
+          id="magicCube"
+          position="0 0.5 0"
+          rotation="0 45 0"
+          color="red"
+          scale="0.8 0.8 0.8"
+          shadow
+        >
+          <a-animation
+            attribute="rotation"
+            dur="3000"
+            to="0 360 0"
+            easing="linear"
+            repeat="indefinite"
+          ></a-animation>
+        </a-box>
+      </a-marker>
+
+      <!-- Камера, которая будет отображать AR мир -->
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <!-- Информационное сообщение для пользователя -->
+    <div id="ar-info">
+      Наведите камеру на распечатанный 'Hiro' маркер.
+      <br />
+      Коснитесь куба, чтобы изменить его цвет!
+    </div>
+
+    <script>
+      // JavaScript для интерактивности
+      document.addEventListener("DOMContentLoaded", function () {
+        var magicCube = document.getElementById("magicCube");
+        var colors = ["red", "blue", "green", "purple", "orange"];
+        var currentColorIndex = 0;
+
+        // Обработчик события клика/касания на кубе
+        magicCube.addEventListener("click", function () {
+          currentColorIndex = (currentColorIndex + 1) % colors.length;
+          magicCube.setAttribute("color", colors[currentColorIndex]);
+          console.log("Куб изменил цвет на: " + colors[currentColorIndex]);
+        });
+
+        // Дополнительная логика для скрытия/показа сообщения, если нужно
+        var arInfo = document.getElementById("ar-info");
+        // Например, можно скрыть сообщение, когда маркер виден
+        // Однако для простоты этого примера оставим его всегда видимым
+      });
+    </script>
+  </body>
+</html>
