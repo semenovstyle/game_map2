@@ -35,11 +35,33 @@
         Интерактивность через компонент. 
         Мы его оставим, но пока не будем использовать для модели. 
     -->
+
     <script>
-      AFRAME.registerComponent("model-interactivity", {
+      AFRAME.registerComponent("model-controller", {
+        // schema определяет настраиваемые параметры для нашего компонента
+        schema: {
+          initialScale: { type: "vec3", default: { x: 0.1, y: 0.1, z: 0.1 } },
+          zoomedScale: { type: "vec3", default: { x: 0.15, y: 0.15, z: 0.15 } },
+        },
+
         init: function () {
-          // Логику для модели можно будет добавить сюда позже
-          console.log("Модель готова к интерактиву!");
+          // this.el - это сама 3D-модель
+          const model = this.el;
+          this.isZoomed = false; // Флаг, чтобы отслеживать текущее состояние
+
+          model.addEventListener("click", () => {
+            if (!this.isZoomed) {
+              // Если не увеличено - увеличиваем
+              model.setAttribute("scale", this.data.zoomedScale);
+              this.isZoomed = true;
+              console.log("Модель увеличена!");
+            } else {
+              // Если уже увеличено - делаем невидимой
+              model.setAttribute("visible", false);
+              console.log("Модель спрятана!");
+              // Опционально: можно добавить логику для сброса квеста
+            }
+          });
         },
       });
     </script>
@@ -69,11 +91,10 @@
             -->
         <a-gltf-model
           src="#duck-model"
-          scale="0.1 0.1 0.1"
           position="0 0 0"
           rotation="0 -90 0"
+          model-controller="initialScale: 0.1 0.1 0.1; zoomedScale: 0.15 0.15 0.15"
           animation="property: rotation; to: 0 270 0; loop: true; dur: 5000; easing: linear;"
-          model-interactivity
         >
         </a-gltf-model>
       </a-marker>
